@@ -1,29 +1,48 @@
-import './App.css';
+import { Suspense, useEffect } from 'react';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import ContactForm from './components/ContactForm';
-import Filter from './components/Filter';
-import ContactList from './components/ContactList';
 import AppBar from 'components/AppBar';
-import { Route } from 'react-router-dom';
+import { Switch } from 'react-router-dom';
+import HomePage from './pages/HomePage';
+import ContactsPage from './pages/ContactsPage';
+import RegisterPage from './pages/RegisterPage';
+import LoginPage from './pages/LoginPage';
+import { useDispatch } from 'react-redux';
+import authOperations from './redux/auth/authOperations';
+import PrivateRoute from 'components/PrivateRoute';
+import PublicRoute from 'components/PublicRoute';
 
 function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(authOperations.fetchCurrentUser());
+  }, [dispatch]);
+
   return (
-    <>
+    <div className="mainWrapper">
       <ToastContainer />
       <AppBar />
-      <Route path="/" exact>
-        Домашняя страница
-      </Route>
-      <Route path="/register"> Регистрация</Route>
-      <Route path="/login"> Логин</Route>
-      <Route path="/contact">
-        <ContactForm />
-        <h2>Contacts</h2>
-        <Filter />
-        <ContactList />
-      </Route>
-    </>
+      <Switch>
+        <Suspense fallback={<p>Loading...</p>}>
+          <PublicRoute exact path="/">
+            <HomePage />
+          </PublicRoute>
+
+          <PublicRoute exact path="/register" restricted>
+            <RegisterPage />
+          </PublicRoute>
+
+          <PublicRoute exact path="/login" redirectTo="/contact" restricted>
+            <LoginPage />
+          </PublicRoute>
+
+          <PrivateRoute path="/contact">
+            <ContactsPage />
+          </PrivateRoute>
+        </Suspense>
+      </Switch>
+    </div>
   );
 }
 

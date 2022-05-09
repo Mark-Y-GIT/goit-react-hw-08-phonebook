@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import s from './ContactForm.module.css';
-import { addContact } from '../../redux/actions';
 import { toast } from 'react-toastify';
+import contactsSelectors from 'redux/contacts/contactsSelectors';
+import { addContact } from '../../redux/contacts/contactsOperation';
 
 function ContactForm() {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
-  const contacts = useSelector(state => state.contacts);
+  const contacts = useSelector(contactsSelectors.getContact);
   const dispatch = useDispatch();
 
   const handleInputChange = e => {
@@ -44,7 +45,7 @@ function ContactForm() {
   };
 
   return (
-    <form className={s.border} onSubmit={handleOnSubmit}>
+    <form className={s.wrapper} onSubmit={handleOnSubmit}>
       <h2>Name</h2>
       <input
         type="text"
@@ -57,6 +58,7 @@ function ContactForm() {
       />
       <h2>Number</h2>
       <input
+        className={s.formInput}
         type="tel"
         name="number"
         value={number}

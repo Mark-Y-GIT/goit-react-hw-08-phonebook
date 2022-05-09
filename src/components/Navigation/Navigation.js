@@ -1,7 +1,11 @@
+import { useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import s from './Navigation.module.css';
+import authSelectors from 'redux/auth/authSelectors';
 
 export default function Navigation() {
+  const isLoggedIn = useSelector(authSelectors.getIsLoggedIn);
+
   return (
     <nav>
       <ul className={s.navList}>
@@ -12,36 +16,20 @@ export default function Navigation() {
             className={s.navListLink}
             activeClassName={s.navListLinkIsActive}
           >
-            Домашняя страница
+            Homepage
           </NavLink>
         </li>
-        <li className={s.navListItem}>
-          <NavLink
-            to="/register"
-            className={s.navListLink}
-            activeClassName={s.navListLinkIsActive}
-          >
-            Регистрация
-          </NavLink>
-        </li>
-        <li className={s.navListItem}>
-          <NavLink
-            to="/login"
-            className={s.navListLink}
-            activeClassName={s.navListLinkIsActive}
-          >
-            Логин
-          </NavLink>
-        </li>
-        <li className={s.navListItem}>
-          <NavLink
-            to="/contact"
-            className={s.navListLink}
-            activeClassName={s.navListLinkIsActive}
-          >
-            Контакты
-          </NavLink>
-        </li>
+        {isLoggedIn && (
+          <li className={s.navListItem}>
+            <NavLink
+              to="/contact"
+              className={s.navListLink}
+              activeClassName={s.navListLinkIsActive}
+            >
+              Contacts
+            </NavLink>
+          </li>
+        )}
       </ul>
     </nav>
   );
